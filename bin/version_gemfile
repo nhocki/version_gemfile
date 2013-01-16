@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'version_gemfile'
+
+options = {}
+
+opt_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: version_gemfile [options]"
+
+  opts.on("-g", "--gemfile", "Gemfile path") do |path|
+    options[:gemfile] = path
+  end
+end
+
+opt_parser.parse!
+
+VersionGemfile::Versioner.add_versions!(options)
