@@ -2,21 +2,26 @@ require 'tempfile'
 
 module VersionGemfile
   class Versioner
-    attr_reader :lock_contents, :gemfile_content
+    attr_reader :lock_contents, :gemfile_content, :options, :lockfile_path,
+                :gemfile_path
 
     IS_GEM_LINE = /^\s* gem \s+ ['|"] /ix
     HAS_VERSION  = /^\s*gem \s+ ['|"] \s* [\w|-]+ \s* ['|"]\s*,\s*['|"]/ix
     GET_GEM_NAME = /^\s*gem \s+ ['|"] \s* ([\w|-]+) \s* ['|"]/ix
     GET_VERSION_NUMBER = /^\s+[\w|-]+ \s \( ([\w|\.]+) \)/ix
 
-    def self.add_versions!
-      new.add_versions
+    def self.add_versions!(options = {})
+      new(options).add_versions
     end
 
-    def initialize
-      @lock_contents   = File.read("Gemfile.lock")
-      @gemfile_content = File.readlines('Gemfile')
-      @orig_gemfile = File.read("Gemfile")
+    def initialize(options = {})
+      @options = normalize_hash(options.clone)
+      @gemfile_path = @options.fetch('gemfile'){ 'Gemfile' }
+      @lockfile_path = @options.fetch('lockfile'){ 'Gemfile.lock' }
+
+      @lock_contents   = File.read(lockfile_path)
+      @gemfile_content = File.readlines(gemfile_path)
+      @orig_gemfile = File.read(gemfile_path)
     end
 
     #TODO: Clean this up!
@@ -30,13 +35,13 @@ module VersionGemfile
             new_gemfile.puts(gem_line)
           end
         end
-        File.truncate("Gemfile", 0)
+        File.truncate(gemfile_path, 0)
         new_gemfile.rewind
-        File.open("Gemfile", "w") {|f| f.write(new_gemfile.read)}
+        File.open(gemfile_path, "w") {|f| f.write(new_gemfile.read)}
       rescue Exception => e
         puts "ERROR: #{e}"
-        puts "Restoring Gemfile"
-        File.open("Gemfile", "w") {|f| f.write(@orig_gemfile)}
+        puts "Restoring Gemfile at #{gemfile_path}"
+        File.open(gemfile_path, "w") {|f| f.write(@orig_gemfile)}
       ensure
         new_gemfile.close
         new_gemfile.unlink
@@ -64,6 +69,15 @@ module VersionGemfile
     def get_version(gem_name)
       regexp = /^\s+#{gem_name}\s\(([\w|\.]+)\)/ix
       regexp.match(lock_contents) { $1 }
+    end
+
+    def normalize_hash(hash)
+      hash.keys.each do |k|
+        unless k.is_a?(String)
+          hash[k.to_s] = hash.delete(k)
+        end
+      end
+      hash
     end
   end
 end
