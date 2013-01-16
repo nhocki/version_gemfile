@@ -1,5 +1,8 @@
 # Version Gemfile
 
+[![Build Status](https://travis-ci.org/nhocki/version_gemfile.png)](http://travis-ci.org/nhocki/version_gemfile)
+
+
 Version Gemfile is a simple gem to add version numbers to your Gemfile gems.
 
 The [problem](http://tenderlovemaking.com/2012/12/18/rails-4-and-your-gemfile.html)
