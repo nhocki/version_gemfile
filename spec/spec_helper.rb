@@ -12,8 +12,20 @@ module SpecHelpers
     File.read(File.join(support_dir_path, filename))
   end
 
+  def support_file_lines(filename)
+    File.readlines(File.join(support_dir_path, filename))
+  end
+
   def test_gemfile_lock
     read_support_file "Gemfile.lock.test"
+  end
+
+  def final_gemfile
+    read_support_file "Gemfile.final.test"
+  end
+
+  def original_gemfile_lines
+    support_file_lines "Gemfile.initial.test"
   end
 end
   
