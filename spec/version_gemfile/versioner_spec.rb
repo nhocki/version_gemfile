@@ -20,8 +20,7 @@ module VersionGemfile
 
     describe "#add_versions" do
       let(:options) {{
-        gemfile: File.join(support_dir_path, "Gemfile.initial.test"),
-        lockfile: File.join(support_dir_path, "Gemfile.lock.test"),
+        gemfile: File.join(support_dir_path, "Gemfile.initial.test")
       }}
 
       let(:versioner) { Versioner.new(options) }
@@ -38,6 +37,11 @@ module VersionGemfile
 
       it "adds versions to the gemfile" do
         versioner.add_versions
+        expect(File.read(options[:gemfile])).to eql(final_gemfile)
+      end
+
+      it "Versioner.add_versions! also adds versions to the gemfile" do
+        Versioner.add_versions!(options)
         expect(File.read(options[:gemfile])).to eql(final_gemfile)
       end
     end

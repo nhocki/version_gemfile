@@ -17,7 +17,7 @@ module SpecHelpers
   end
 
   def test_gemfile_lock
-    read_support_file "Gemfile.lock.test"
+    read_support_file "Gemfile.initial.test.lock"
   end
 
   def final_gemfile
