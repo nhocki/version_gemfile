@@ -58,13 +58,19 @@ module VersionGemfile
 
     def build_gem_line(gem_line, version = nil)
       return gem_line if gem_line.match(HAS_VERSION)
-      gem_name = gem_line.match(GET_GEM_NAME) { $1 }
-      spaces = gem_line.match(/^(\s+)/){ $1 }
-      version ||= get_version(gem_name)
-      "#{spaces}gem '#{gem_name}', '~> #{version}'"
+      version ||= get_version(gem_name(gem_line))
+      "#{spaces(gem_line)}gem '#{gem_name(gem_line)}', '~> #{version}'"
     end
 
     private
+
+    def gem_name(gem_line)
+      gem_line.match(GET_GEM_NAME) { $1 }
+    end
+
+    def spaces(gem_line)
+      gem_line.match(/^(\s+)/){ $1 }
+    end
 
     def get_version(gem_name)
       regexp = /^\s+#{gem_name}\s\(([\w|\.]+)\)/ix
