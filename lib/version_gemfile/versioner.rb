@@ -52,17 +52,20 @@ module VersionGemfile
       gem_line.match(HAS_VERSION)
     end
 
-    def is_gem_line?(gem_line)
-      gem_line =~ IS_GEM_LINE
-    end
-
-    def build_gem_line(gem_line, version = nil)
+    def build_gem_line(gem_line)
       return gem_line if gem_line.match(HAS_VERSION)
-      version ||= get_version(gem_name(gem_line))
-      "#{spaces(gem_line)}gem '#{gem_name(gem_line)}', '~> #{version}'"
+
+      name    = gem_name(gem_line)
+      version = get_version(name)
+      options = gem_line.gsub(GET_GEM_NAME, '').strip
+      "#{spaces(gem_line)}gem '#{name}', '~> #{version}'#{options}"
     end
 
     private
+
+    def is_gem_line?(gem_line)
+      gem_line =~ IS_GEM_LINE
+    end
 
     def gem_name(gem_line)
       gem_line.match(GET_GEM_NAME) { $1 }

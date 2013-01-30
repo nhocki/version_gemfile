@@ -5,16 +5,16 @@ module VersionGemfile
 
     describe "#build_gem_line" do
       let(:versioner) { Versioner.new }
+      before { versioner.stub(lock_contents: test_gemfile_lock) }
 
       it "adds a pessimistic version to the gem" do
-        expect(versioner.build_gem_line("gem 'rails'", "45.3.2")).to eql("gem 'rails', '~> 45.3.2'")
-        expect(versioner.build_gem_line('gem "rails"', "45.3.2")).to eql("gem 'rails', '~> 45.3.2'")
-        expect(versioner.build_gem_line('gem "rack-cache"', "5.3.2")).to eql("gem 'rack-cache', '~> 5.3.2'")
+        expect(versioner.build_gem_line("gem 'rails'")).to match(/~>/)
       end
 
       it "adds the version from the Gemfile.lock file" do
-        versioner.stub(lock_contents: test_gemfile_lock)
         expect(versioner.build_gem_line "gem 'pg'" ).to eql("gem 'pg', '~> 0.14.1'")
+        expect(versioner.build_gem_line "gem 'pg', :require => 'hello'" ).to eql("gem 'pg', '~> 0.14.1', :require => 'hello'")
+        expect(versioner.build_gem_line "gem 'pg', require: 'hello'" ).to eql("gem 'pg', '~> 0.14.1', require: 'hello'")
       end
     end
 
