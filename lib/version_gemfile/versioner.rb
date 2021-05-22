@@ -57,6 +57,9 @@ module VersionGemfile
 
       name    = gem_name(gem_line)
       version = get_version(name)
+
+      return gem_line unless version
+
       options = gem_line.gsub(GET_GEM_NAME, '').strip
       "#{spaces(gem_line)}gem '#{name}', '~> #{version}'#{options}"
     end
