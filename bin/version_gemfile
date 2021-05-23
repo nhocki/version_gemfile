@@ -8,8 +8,12 @@ options = {}
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: version_gemfile [options]"
 
-  opts.on("-g", "--gemfile", "Gemfile path") do |path|
+  opts.on("-g", "--gemfile STRING", "Gemfile path") do |path|
     options[:gemfile] = path
+  end
+
+  opts.on("-l", "--gemfile-lock STRING", "Gemfile.lock path") do |path|
+    options[:gemfile_lock] = path
   end
 end
 
