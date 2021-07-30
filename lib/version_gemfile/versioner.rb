@@ -17,7 +17,7 @@ module VersionGemfile
     def initialize(options = {})
       @options = normalize_hash(options.clone)
       @gemfile_path = @options.fetch('gemfile'){ 'Gemfile' }
-      @lockfile_path = "#{@gemfile_path}.lock"
+      @lockfile_path = @options.fetch('gemfile_lock'){ "#{@gemfile_path}.lock" }
 
       @lock_contents   = File.read(lockfile_path)
       @gemfile_content = File.readlines(gemfile_path)
