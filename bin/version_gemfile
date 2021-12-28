@@ -15,6 +15,10 @@ opt_parser = OptionParser.new do |opts|
   opts.on("-l", "--gemfile-lock STRING", "Gemfile.lock path") do |path|
     options[:gemfile_lock] = path
   end
+
+  opts.on("-q", "--gem-command-quote STRING", "Gem command quote") do |quote|
+    options[:gem_command_quote] = quote
+  end
 end
 
 opt_parser.parse!

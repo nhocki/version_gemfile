@@ -3,12 +3,14 @@ require 'tempfile'
 module VersionGemfile
   class Versioner
     attr_reader :lock_contents, :gemfile_content, :options, :lockfile_path,
-                :gemfile_path
+                :gemfile_path, :gem_command_quote
 
     IS_GEM_LINE = /^\s* gem \s+ ['|"] /ix
     HAS_VERSION  = /^\s*gem \s+ ['|"] \s* [\w|-]+ \s* ['|"]\s*,\s*['|"]/ix
     GET_GEM_NAME = /^\s*gem \s+ ['|"] \s* ([\w|-]+) \s* ['|"]/ix
     GET_VERSION_NUMBER = /^\s+[\w|-]+ \s \( ([\w|\.]+) \)/ix
+
+    DEFAULT_GEM_COMMAND_QUOTE = '\''
 
     def self.add_versions!(options = {})
       new(options).add_versions
@@ -18,7 +20,7 @@ module VersionGemfile
       @options = normalize_hash(options.clone)
       @gemfile_path = @options.fetch('gemfile'){ 'Gemfile' }
       @lockfile_path = @options.fetch('gemfile_lock'){ "#{@gemfile_path}.lock" }
-
+      @gem_command_quote = @options.fetch('gem_command_quote'){ DEFAULT_GEM_COMMAND_QUOTE }
       @lock_contents   = File.read(lockfile_path)
       @gemfile_content = File.readlines(gemfile_path)
       @orig_gemfile = File.read(gemfile_path)
@@ -61,7 +63,10 @@ module VersionGemfile
       return gem_line unless version
 
       options = gem_line.gsub(GET_GEM_NAME, '').strip
-      "#{spaces(gem_line)}gem '#{name}', '~> #{version}'#{options}"
+
+      quote = gem_command_quote || DEFAULT_GEM_COMMAND_QUOTE
+
+      "#{spaces(gem_line)}gem #{quote}#{name}#{quote}, #{quote}~> #{version}#{quote}#{options}"
     end
 
     private
