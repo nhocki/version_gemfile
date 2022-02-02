@@ -1,5 +1,5 @@
-require 'bundler'
-require 'version_gemfile'
+require "bundler"
+require "version_gemfile"
 
 Bundler.require(:default, :test, :development)
 
@@ -28,7 +28,6 @@ module SpecHelpers
     support_file_lines "Gemfile.initial.test"
   end
 end
-  
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|

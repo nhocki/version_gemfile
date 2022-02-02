@@ -1,8 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
 module VersionGemfile
   describe Versioner do
-
     describe "#build_gem_line" do
       let(:versioner) { Versioner.new }
       before { versioner.stub(lock_contents: test_gemfile_lock) }
@@ -12,16 +11,18 @@ module VersionGemfile
       end
 
       it "adds the version from the Gemfile.lock file" do
-        expect(versioner.build_gem_line "gem 'pg'" ).to eql("gem 'pg', '~> 0.14.1'")
-        expect(versioner.build_gem_line "gem 'pg', :require => 'hello'" ).to eql("gem 'pg', '~> 0.14.1', :require => 'hello'")
-        expect(versioner.build_gem_line "gem 'pg', require: 'hello'" ).to eql("gem 'pg', '~> 0.14.1', require: 'hello'")
+        expect(versioner.build_gem_line("gem 'pg'")).to eql('gem "pg", "~> 0.14.1"')
+        expect(versioner.build_gem_line("gem 'pg', :require => 'hello'")).to eql('gem "pg", "~> 0.14.1", :require => \'hello\'')
+        expect(versioner.build_gem_line("gem 'pg', require: 'hello'")).to eql('gem "pg", "~> 0.14.1", require: \'hello\'')
       end
     end
 
     describe "#add_versions" do
-      let(:options) {{
-        gemfile: File.join(support_dir_path, "Gemfile.initial.test")
-      }}
+      let(:options) {
+        {
+          gemfile: File.join(support_dir_path, "Gemfile.initial.test")
+        }
+      }
 
       let(:versioner) { Versioner.new(options) }
 
@@ -32,7 +33,7 @@ module VersionGemfile
       end
 
       after do
-        File.open(options[:gemfile], "w"){|f| f.write(@original_gemfile)}
+        File.write(options[:gemfile], @original_gemfile)
       end
 
       it "adds versions to the gemfile" do
@@ -56,7 +57,7 @@ module VersionGemfile
         GEMS
 
         gems.split("\n").each do |gem_name|
-          expect(matcher.match_gem(gem_name)).to be_true
+          expect(matcher.match_gem(gem_name)).to be_truthy
         end
       end
 
@@ -68,7 +69,7 @@ module VersionGemfile
         GEMS
 
         gems.split("\n").each do |gem_name|
-          expect(matcher.match_gem(gem_name)).to be_false
+          expect(matcher.match_gem(gem_name)).to be_falsey
         end
       end
     end

@@ -33,8 +33,6 @@ Or install it yourself as:
 
 Simply type `$ version_gemfile` and you're done.
 
-Also, you should consider the [Add Gem](https://github.com/abuiles/add_gem) gem to add gems to your Gemfile.
-
 ## Contributing
 
 1. Fork it

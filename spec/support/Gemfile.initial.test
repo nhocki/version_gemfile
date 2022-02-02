@@ -1,10 +1,10 @@
-source 'http://rubygems.org'
-ruby '1.9.3'
+source "http://rubygems.org"
+ruby "1.9.3"
 
-gem 'rails', '3.2.8'
+gem "rails", "3.2.8"
 gem "pg"
 gem "nokogiri"
-gem 'jquery-rails'
+gem "jquery-rails"
 gem "airbrake"
 gem "devise"
 gem "twitter-bootstrap-rails", "2.1.4"
@@ -21,8 +21,8 @@ group :development, :test do
 end
 
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'uglifier', '>= 1.0.3'
+  gem "sass-rails",   "~> 3.2.3"
+  gem "uglifier", ">= 1.0.3"
 end
 
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]

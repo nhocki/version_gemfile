@@ -1,16 +1,16 @@
-require 'tempfile'
+require "tempfile"
 
 module VersionGemfile
   class Versioner
     attr_reader :lock_contents, :gemfile_content, :options, :lockfile_path,
-                :gemfile_path, :gem_command_quote
+      :gemfile_path, :gem_command_quote
 
     IS_GEM_LINE = /^\s* gem \s+ ['|"] /ix
-    HAS_VERSION  = /^\s*gem \s+ ['|"] \s* [\w|-]+ \s* ['|"]\s*,\s*['|"]/ix
+    HAS_VERSION = /^\s*gem \s+ ['|"] \s* [\w|-]+ \s* ['|"]\s*,\s*['|"]/ix
     GET_GEM_NAME = /^\s*gem \s+ ['|"] \s* ([\w|-]+) \s* ['|"]/ix
-    GET_VERSION_NUMBER = /^\s+[\w|-]+ \s \( ([\w|\.]+) \)/ix
+    GET_VERSION_NUMBER = /^\s+[\w|-]+ \s \( ([\w|.]+) \)/ix
 
-    DEFAULT_GEM_COMMAND_QUOTE = '\''
+    DEFAULT_GEM_COMMAND_QUOTE = '"'.freeze
 
     def self.add_versions!(options = {})
       new(options).add_versions
@@ -18,15 +18,15 @@ module VersionGemfile
 
     def initialize(options = {})
       @options = normalize_hash(options.clone)
-      @gemfile_path = @options.fetch('gemfile'){ 'Gemfile' }
-      @lockfile_path = @options.fetch('gemfile_lock'){ "#{@gemfile_path}.lock" }
-      @gem_command_quote = @options.fetch('gem_command_quote'){ DEFAULT_GEM_COMMAND_QUOTE }
-      @lock_contents   = File.read(lockfile_path)
+      @gemfile_path = @options.fetch("gemfile") { "Gemfile" }
+      @lockfile_path = @options.fetch("gemfile_lock") { "#{@gemfile_path}.lock" }
+      @gem_command_quote = @options.fetch("gem_command_quote") { DEFAULT_GEM_COMMAND_QUOTE }
+      @lock_contents = File.read(lockfile_path)
       @gemfile_content = File.readlines(gemfile_path)
       @orig_gemfile = File.read(gemfile_path)
     end
 
-    #TODO: Clean this up!
+    # TODO: Clean this up!
     def add_versions
       new_gemfile = Tempfile.new("Gemfile.versioned")
       begin
@@ -39,11 +39,11 @@ module VersionGemfile
         end
         File.truncate(gemfile_path, 0)
         new_gemfile.rewind
-        File.open(gemfile_path, "w") {|f| f.write(new_gemfile.read)}
-      rescue Exception => e
+        File.write(gemfile_path, new_gemfile.read)
+      rescue => e
         puts "ERROR: #{e}"
         puts "Restoring Gemfile at #{gemfile_path}"
-        File.open(gemfile_path, "w") {|f| f.write(@orig_gemfile)}
+        File.write(gemfile_path, @orig_gemfile)
       ensure
         new_gemfile.close
         new_gemfile.unlink
@@ -57,12 +57,12 @@ module VersionGemfile
     def build_gem_line(gem_line)
       return gem_line if gem_line.match(HAS_VERSION)
 
-      name    = gem_name(gem_line)
+      name = gem_name(gem_line)
       version = get_version(name)
 
       return gem_line unless version
 
-      options = gem_line.gsub(GET_GEM_NAME, '').strip
+      options = gem_line.gsub(GET_GEM_NAME, "").strip
 
       quote = gem_command_quote || DEFAULT_GEM_COMMAND_QUOTE
 
@@ -80,11 +80,11 @@ module VersionGemfile
     end
 
     def spaces(gem_line)
-      gem_line.match(/^(\s+)/){ $1 }
+      gem_line.match(/^(\s+)/) { $1 }
     end
 
     def get_version(gem_name)
-      regexp = /^\s+#{gem_name}\s\(([\w|\.]+)\)/ix
+      regexp = /^\s+#{gem_name}\s\(([\w|.]+)\)/ix
       regexp.match(lock_contents) { $1 }
     end
 
