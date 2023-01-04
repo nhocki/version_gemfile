@@ -18,5 +18,5 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency("rake", "~> 13.0.6")
   gem.add_development_dependency("rspec", "~> 3.11.0")
-  gem.add_development_dependency("standard", "~> 1.12.1")
+  gem.add_development_dependency("standard", "~> 1.21.0")
 end
